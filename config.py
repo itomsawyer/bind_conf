@@ -11,6 +11,8 @@ class DevelopmentConfig(Config):
     Development configurations
     """
 
+    DNS_FORWARD_SUBMIT_PATH="/tmp/iwgconf.conf"
+
     LISTEN_HOST=""
     LISTEN_PORT=5001
 
