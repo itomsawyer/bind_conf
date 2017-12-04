@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 import os
 import string
+import StringIO
 
 from flask_admin.contrib import sqla
 from flask_admin.contrib.sqla.fields import QuerySelectMultipleField, QuerySelectField
@@ -32,33 +33,36 @@ class SubmitView(BaseView):
             pass
 
         try:
-            #dfs = DnsForwardZone.query.all()
-            #with open(path, "w") as f:
-            #    for df in dfs:
-            #        dnsList = string.split(df.dns)
-            #        f.write("zone \"%s\" IN {\n" % df.dm)
-            #        f.write("type forward;\n")
-            #        f.write("forward %s;\n" % df.typ)
-            #        f.write("forwarders {\n")
-            #        for dns in dnsList:
-            #            f.write("%s;\n" % dns.strip())
-            #        f.write("};\n")
-            #        f.write("};\n")
-            #    f.close()
+            dfs = models.DnsForwardZone.query.all()
+            s = StringIO.StringIO()
+            for df in dfs:
+                s.write("zone \"%s\" IN {\n" % df.dm)
+                s.write("type forward;\n")
+                s.write("forward %s;\n" % df.typ)
+                s.write("forwarders {\n")
+                for dns in df.ldns:
+                    s.write("%s;\n" % dns.addr)
+                s.write("};\n")
+                s.write("};\n")
+
+            with open(path, "w") as f:
+                f.write(s.getvalue())
+                f.close()
 
             retcode = os.system("rndc reload")
         except Exception,e:
+            lock.release()
             return self.render('admin/submit.html', retcode=-1, msg="%s" % e)
 
         lock.release()
-
         return self.render('admin/submit.html', retcode=retcode)
 
 
 class DnsForwardZoneView(sqla.ModelView):
-    column_searchable_list = [models.DnsForwardZone.dm]
-    column_filters =  column_searchable_list
-    column_labels = dict(dm=u'域名', typ=u'转发策略', ldns=u"DNS服务器")
+    column_list = ('dm', 'ldns', 'typ')
+    column_searchable_list = ['dm','typ']
+    column_filters = ['dm','ldns','typ']
+    column_labels = dict(dm=u'域名', typ=u'转发策略', ldns=u"DNS服务器",dns_fwds=u"DNS Forwarder")
 
     can_export = True
 
@@ -71,7 +75,7 @@ class DnsForwardZoneView(sqla.ModelView):
     }
 
     form_args = {
-        'ldns': {
+        'dns_fwds': {
             'validators': [Required()]
         },
         'dm': {

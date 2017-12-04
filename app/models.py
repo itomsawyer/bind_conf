@@ -18,9 +18,8 @@ class DnsForwardZone(db.Model):
     dm = db.Column(db.String(255), unique=True)
     typ = db.Column(db.String(16), nullable=False, server_default=db.text("'only'"))
 
-    ldns = db.relationship('Ldns', secondary=DnsForwarder)
-    ldns = db.relationship('Ldns')
-    ldns_values = association_proxy("dns_forwarders","ldns_values")
+    ldns = association_proxy("dns_fwds","ldns")
+    #ldns_values = association_proxy("dns_fwds","ldns_addr")
 
 
 class DnsForwarder(db.Model):
@@ -30,11 +29,12 @@ class DnsForwarder(db.Model):
     zone_id = db.Column(db.ForeignKey(u'dns_forward_zone.id', ondelete=u'CASCADE', onupdate=u'CASCADE'), index=True)
     ldns_id = db.Column(db.ForeignKey(u'ldns.id'), index=True)
 
+    zone = db.relationship(DnsForwardZone, backref=db.backref("dns_fwds",cascade="all, delete-orphan"))
     ldns = db.relationship(u'Ldns')
-    zone = db.relationship(u'DnsForwardZone')
-    ldns_values = association_proxy("Ldns","addr")
+    #ldns_addr = association_proxy("ldns","addr")
 
-
+    def __str__(self) :
+        return self.ldns.name + " " +  self.ldns.addr
 
 
 class Ldns(db.Model):
@@ -50,5 +50,8 @@ class Ldns(db.Model):
 
     def __str__(self):
         return self.addr
+
+    def __repr__(self):
+        return 'Ldns(%s)' % repr(self.addr)
 
 
