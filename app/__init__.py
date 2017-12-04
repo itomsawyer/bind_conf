@@ -1,9 +1,14 @@
 # third-party imports
-from flask import Flask
+from flask import Flask,redirect,Blueprint
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
-from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+
+import flask_admin as admin
+from flask_admin.contrib import sqla
+from flask_admin.contrib.sqla import filters
+
+blp = Blueprint('main', __name__)
 
 # local imports
 from config import app_config
@@ -17,22 +22,32 @@ def create_app(config_name):
     app.config.from_object(app_config[config_name])
     #app.config.from_pyfile('config.py')
 
+    #app.config['SECRET_KEY'] = '123456790'
+    ## Create in-memory database
+    #app.config['DATABASE_FILE'] = 'iwg'
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:@localhost/' + app.config['DATABASE_FILE']
+
     Bootstrap(app)
-    db.init_app(app)
+    with app.app_context():
+        db.init_app(app)
+
     login_manager.init_app(app)
     login_manager.login_message = "You must be logged in to access this page."
     login_manager.login_view = "auth.login"
-    migrate = Migrate(app, db)
 
     from app import models
 
-    from .admin import admin as admin_blueprint
-    app.register_blueprint(admin_blueprint, url_prefix='/admin')
+    @app.route('/')
+    def index():
+        return redirect("/admin/",code=301)
 
-    from .auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint)
+    from . import action
+    app.register_blueprint(blp)
 
-    from .home import home as home_blueprint
-    app.register_blueprint(home_blueprint)
+    # Create admin
+    ad = admin.Admin(app, name='IWG', template_mode='bootstrap3')
+
+    from app import view
+    ad.add_view(view.DnsForwarderView(models.DnsForwarder, db.session))
 
     return app

@@ -11,6 +11,9 @@ class DevelopmentConfig(Config):
     Development configurations
     """
 
+    SECRET_KEY='123456790'
+    DATABASE_FILE = 'iwg'
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:@localhost/' + DATABASE_FILE
     DEBUG = True
     SQLALCHEMY_ECHO = True
 
@@ -23,6 +26,6 @@ class ProductionConfig(Config):
     DEBUG = False
 
 app_config = {
-    'development': DevelopmentConfig,
-    'production': ProductionConfig
+    'dev': DevelopmentConfig,
+    'prod': ProductionConfig
 }
