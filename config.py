@@ -11,6 +11,9 @@ class DevelopmentConfig(Config):
     Development configurations
     """
 
+    LISTEN_HOST=""
+    LISTEN_PORT=5001
+
     SECRET_KEY='123456790'
     DATABASE_FILE = 'iwg'
     SQLALCHEMY_DATABASE_URI = 'mysql://root:@localhost/' + DATABASE_FILE

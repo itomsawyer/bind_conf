@@ -1,7 +1,7 @@
 import os
 import threading
 import string
-from .models import DnsForwarder
+from .models import DnsForwardZone
 from flask import render_template
 from . import blp
 
@@ -13,7 +13,7 @@ def submit_all():
     retcode = 0
     lock.acquire(True)
     try:
-        dfs = DnsForwarder.query.all()
+        dfs = DnsForwardZone.query.all()
         with open("/tmp/iwgweb.conf", "w") as f:
             for df in dfs:
                 dnsList = string.split(df.dns)

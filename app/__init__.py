@@ -48,6 +48,6 @@ def create_app(config_name):
     ad = admin.Admin(app, name='IWG', template_mode='bootstrap3')
 
     from app import view
-    ad.add_view(view.DnsForwarderView(models.DnsForwarder, db.session))
+    ad.add_view(view.DnsForwardZoneView(db.session))
 
     return app

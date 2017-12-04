@@ -25,12 +25,13 @@ from . import models
 #            return u''
 
 
-class DnsForwarderView(sqla.ModelView):
-    column_searchable_list = [models.DnsForwarder.dm, models.DnsForwarder.dns]
+class DnsForwardZoneView(sqla.ModelView):
+    column_searchable_list = [models.DnsForwardZone.dm]
     column_filters =  column_searchable_list
 
-    form_excluded_columns = ('typ')
+    can_export = True
 
+    form_excluded_columns = ('typ')
     form_choices = {
             'typ': [
                ('only', 'only'),
@@ -38,18 +39,28 @@ class DnsForwarderView(sqla.ModelView):
             ]
     }
 
-    def ldns_choices():
-        #return [ ldns.addr for ldns in models.Ldns.query.all() ]
-        return models.Ldns.query.all()
+    #form_ajax_refs = {
+    #    'ldns': {
+    #        'fields': (models.Ldns.addr)
+    #    }
+    #}
+
+    def __init__(self, session):
+        # Just call parent class with predefined model.
+        super(DnsForwardZoneView, self).__init__(models.DnsForwardZone, session)
+
+    #def ldns_choices():
+    #    #return [ ldns.addr for ldns in models.Ldns.query.all() ]
+    #    return models.Ldns.query.all()
 
 
-    form_extra_fields= dict(
-        #dns=QuerySelectMultipleField(
-        #dns=MyQuerySelectMultipleField(
-        #    label='DNS server',
-        #    query_factory=ldns_choices,
-        #    validators=[Required()],
-        #)
+    #form_extra_fields= dict(
+    #    #dns=QuerySelectMultipleField(
+    #    #dns=MyQuerySelectMultipleField(
+    #    #    label='DNS server',
+    #    #    query_factory=ldns_choices,
+    #    #    validators=[Required()],
+    #    #)
 
-        dns=Select2TagsField(label='DNS Server',validators=[Required()]),
-    )
+    #    dns=Select2TagsField(label='DNS Server',validators=[Required()]),
+    #)
