@@ -36,14 +36,15 @@ class SubmitView(BaseView):
             dfs = models.DnsForwardZone.query.all()
             s = StringIO.StringIO()
             for df in dfs:
-                s.write("zone \"%s\" IN {\n" % df.dm)
-                s.write("type forward;\n")
-                s.write("forward %s;\n" % df.typ)
-                s.write("forwarders {\n")
-                for dns in df.ldns:
-                    s.write("%s;\n" % dns.addr)
-                s.write("};\n")
-                s.write("};\n")
+                if len(df.ldns) > 0 :
+                    s.write("zone \"%s\" IN {\n" % df.dm)
+                    s.write("\ttype forward;\n")
+                    s.write("\tforward %s;\n" % df.typ)
+                    s.write("\tforwarders {\n")
+                    for dns in df.ldns:
+                        s.write("\t\t%s;\n" % dns.addr)
+                    s.write("\t};\n")
+                    s.write("};\n")
 
             with open(path, "w") as f:
                 f.write(s.getvalue())
