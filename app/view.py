@@ -28,7 +28,8 @@ class SubmitView(BaseView):
 
         try:
             from flask import current_app
-            path = current_app.config.DNS_FORWARD_SUBMIT_PATH
+            if current_app.config["DNS_FORWARD_SUBMIT_PATH"] :
+                path = current_app.config["DNS_FORWARD_SUBMIT_PATH"]
         except Exception, e:
             pass
 
@@ -36,12 +37,12 @@ class SubmitView(BaseView):
             dfs = models.DnsForwardZone.query.all()
             s = StringIO.StringIO()
             for df in dfs:
-                if len(df.ldns) > 0 :
+                if len(df.ldnsList) > 0 :
                     s.write("zone \"%s\" IN {\n" % df.dm)
                     s.write("\ttype forward;\n")
                     s.write("\tforward %s;\n" % df.typ)
                     s.write("\tforwarders {\n")
-                    for dns in df.ldns:
+                    for dns in df.ldnsList:
                         s.write("\t\t%s;\n" % dns.addr)
                     s.write("\t};\n")
                     s.write("};\n")
@@ -53,7 +54,7 @@ class SubmitView(BaseView):
             retcode = os.system("rndc reload")
         except Exception,e:
             lock.release()
-            return self.render('admin/submit.html', retcode=-1, msg="%s" % e)
+            return self.render('admin/submit.html', retcode=1, msg="%s" % e)
 
         lock.release()
         return self.render('admin/submit.html', retcode=retcode)

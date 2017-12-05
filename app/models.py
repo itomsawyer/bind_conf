@@ -33,6 +33,11 @@ class DnsForwarder(db.Model):
     ldns = db.relationship(u'Ldns')
     #ldns_addr = association_proxy("ldns","addr")
 
+    def __init__(self, ldns=None):
+        print ("init ldns", ldns)
+        self.ldns = ldns
+
+
     def __str__(self) :
         return self.ldns.name + " " +  self.ldns.addr
 
@@ -47,6 +52,11 @@ class Ldns(db.Model):
     enable = db.Column(db.Integer, nullable=False, server_default=db.text("'1'"))
     unavailable = db.Column(db.SmallInteger, nullable=False, server_default=db.text("'0'"))
     checkdm = db.Column(db.String(255))
+
+
+    def __init__(self, ):
+        print("init wtf", wtf)
+
 
     def __str__(self):
         return self.addr
