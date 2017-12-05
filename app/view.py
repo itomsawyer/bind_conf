@@ -60,20 +60,21 @@ class SubmitView(BaseView):
 
 
 class DnsForwardZoneView(sqla.ModelView):
-    column_list = ('dm', 'ldns', 'typ')
-    column_searchable_list = ['dm','typ']
-    column_filters = ['dm','ldns','typ']
-    column_labels = dict(dm=u'域名', typ=u'转发策略', ldns=u"DNS服务器",dns_fwds=u"DNS Forwarder")
+    column_list = ('dm', 'ldnsList', 'typ')
+    column_searchable_list = ('dm','typ', 'ldnsList.addr')
+    column_filters = ['dm','ldnsList.addr','typ']
+    column_labels = dict(dm=u'域名', typ=u'转发策略', ldnsList=u"DNS服务器",dns_fwds=u"DNS Forwarder")
 
     can_export = True
 
-    form_excluded_columns = ('typ')
-    form_choices = {
-            'typ': [
-               ('only', 'only'),
-               ('first', 'first'),
-            ]
-    }
+    form_columns = ('dm', 'ldnsList')
+
+    #form_choices = {
+    #        'typ': [
+    #           ('only', 'only'),
+    #           ('first', 'first'),
+    #        ]
+    #}
 
     form_args = {
         'dns_fwds': {
@@ -83,6 +84,7 @@ class DnsForwardZoneView(sqla.ModelView):
             'validators': [Required()]
         }
     }
+
 
     #form_ajax_refs = {
     #    'ldns': {

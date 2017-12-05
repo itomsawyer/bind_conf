@@ -18,8 +18,8 @@ class DnsForwardZone(db.Model):
     dm = db.Column(db.String(255), unique=True)
     typ = db.Column(db.String(16), nullable=False, server_default=db.text("'only'"))
 
-    ldns = association_proxy("dns_fwds","ldns")
-    #ldns_values = association_proxy("dns_fwds","ldns_addr")
+    ldnsList = association_proxy("dns_fwds","ldns")
+    #ldns = db.relationship('Ldns', secondary=DnsForwarder)
 
 
 class DnsForwarder(db.Model):
