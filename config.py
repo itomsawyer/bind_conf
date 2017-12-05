@@ -19,8 +19,10 @@ class DevelopmentConfig(Config):
     SECRET_KEY='123456790'
     DATABASE_FILE = 'iwg'
     SQLALCHEMY_DATABASE_URI = 'mysql://root:@localhost/' + DATABASE_FILE
+
     DEBUG = True
     SQLALCHEMY_ECHO = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class ProductionConfig(Config):
@@ -31,13 +33,14 @@ class ProductionConfig(Config):
     DNS_FORWARD_SUBMIT_PATH="/var/named/iwgweb.conf"
 
     LISTEN_HOST=""
-    LISTEN_PORT=5001
+    LISTEN_PORT=5000
 
     SECRET_KEY='123456790'
     DATABASE_FILE = 'iwg'
     SQLALCHEMY_DATABASE_URI = 'mysql://root:iwgconf@localhost/' + DATABASE_FILE
 
     DEBUG = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 app_config = {
     'dev': DevelopmentConfig,

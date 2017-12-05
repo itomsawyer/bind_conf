@@ -7,7 +7,7 @@ from flask_admin.contrib import sqla
 from flask_admin.contrib.sqla.fields import QuerySelectMultipleField, QuerySelectField
 from flask_admin.form.fields import Select2TagsField
 from flask_admin.form import Select2Widget
-from wtforms.validators import Required
+from wtforms.validators import DataRequired
 
 from . import models
 from flask_admin import BaseView, expose
@@ -78,11 +78,11 @@ class DnsForwardZoneView(sqla.ModelView):
     #}
 
     form_args = {
-        'dns_fwds': {
-            'validators': [Required()]
+        'ldnsList': {
+            'validators': [DataRequired()]
         },
         'dm': {
-            'validators': [Required()]
+            'validators': [DataRequired()]
         }
     }
 
