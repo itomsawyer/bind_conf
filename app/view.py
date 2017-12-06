@@ -15,6 +15,11 @@ from flask_admin import BaseView, expose
 import threading
 lock = threading.Lock()
 
+def my_strip_filter(value):
+    if value is not None and hasattr(value, 'strip'):
+        return value.strip()
+    return value
+
 class SubmitView(BaseView):
     @expose('/')
     def index(self):
@@ -82,7 +87,8 @@ class DnsForwardZoneView(sqla.ModelView):
             'validators': [DataRequired()]
         },
         'dm': {
-            'validators': [DataRequired()]
+            'validators': [DataRequired()],
+            'filters': [my_strip_filter]
         }
     }
 
