@@ -68,10 +68,10 @@ class SubmitView(BaseView):
 class DnsForwardZoneView(sqla.ModelView):
     column_list = ('dm', 'ldnsList', 'typ')
     column_searchable_list = ('dm','typ', 'ldnsList.addr')
-    column_filters = ['dm','ldnsList.addr','typ']
+    #column_filters = ['dm','ldnsList.addr','typ']
     column_labels = dict(dm=u'域名', typ=u'转发策略', ldnsList=u"DNS服务器",dns_fwds=u"DNS Forwarder")
 
-    can_export = True
+    #can_export = True
 
     form_columns = ('dm', 'ldnsList')
 
