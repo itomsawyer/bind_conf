@@ -5,12 +5,6 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 from app import db, login_manager
 
-
-#dns_forwarders_table = db.Table('dns_forwarders', db.Model.metadata,
-#                           db.Column('ldns_id', db.Integer, db.ForeignKey('ldns.id')),
-#                           db.Column('zone_id', db.Integer, db.ForeignKey('dns_forward_zone.id'))
-#                           )
-
 class DnsForwardZone(db.Model):
     __tablename__ = 'dns_forward_zone'
 
@@ -34,7 +28,6 @@ class DnsForwarder(db.Model):
     #ldns_addr = association_proxy("ldns","addr")
 
     def __init__(self, ldns=None):
-        print ("init ldns", ldns)
         self.ldns = ldns
 
 
@@ -52,10 +45,6 @@ class Ldns(db.Model):
     enable = db.Column(db.Integer, nullable=False, server_default=db.text("'1'"))
     unavailable = db.Column(db.SmallInteger, nullable=False, server_default=db.text("'0'"))
     checkdm = db.Column(db.String(255))
-
-
-    def __init__(self, ):
-        print("init wtf", wtf)
 
 
     def __str__(self):
