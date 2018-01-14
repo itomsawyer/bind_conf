@@ -64,53 +64,67 @@ class SubmitView(BaseView):
         lock.release()
         return self.render('admin/submit.html', retcode=retcode)
 
+class DnsForwardZoneGrpView(sqla.ModelView):
+    can_export = True
 
 class DnsForwardZoneView(sqla.ModelView):
-    column_list = ('dm', 'ldnsList', 'typ')
-    column_searchable_list = ('dm','typ', 'ldnsList.addr')
-    #column_filters = ['dm','ldnsList.addr','typ']
-    column_labels = dict(dm=u'域名', typ=u'转发策略', ldnsList=u"DNS服务器",dns_fwds=u"DNS Forwarder")
+    can_export = True
 
-    #can_export = True
+class DnsForwardIpnetGrpView(sqla.ModelView):
+    can_export = True
 
-    form_columns = ('dm', 'ldnsList')
+class DnsForwardIpnetView(sqla.ModelView):
+    can_export = True
 
-    #form_choices = {
-    #        'typ': [
-    #           ('only', 'only'),
-    #           ('first', 'first'),
-    #        ]
-    #}
+class DnsForwarderView(sqla.ModelView):
+    can_export = True
 
-    form_args = {
-        'ldnsList': {
-            'validators': [DataRequired()]
-        },
-        'dm': {
-            'validators': [DataRequired()],
-            'filters': [my_strip_filter]
-        }
-    }
-
-
-    #form_ajax_refs = {
-    #    'ldns': {
-    #        'fields': (models.Ldns.addr)
-    #    }
-    #}
-
-    #def ldns_choices():
-    #    #return [ ldns.addr for ldns in models.Ldns.query.all() ]
-    #    return models.Ldns.query.all()
-
-
-    #form_extra_fields= dict(
-    #    #dns=QuerySelectMultipleField(
-    #    #dns=MyQuerySelectMultipleField(
-    #    #    label='DNS server',
-    #    #    query_factory=ldns_choices,
-    #    #    validators=[Required()],
-    #    #)
-
-    #    dns=Select2TagsField(label='DNS Server',validators=[Required()]),
-    #)
+#class DnsForwardZoneView(sqla.ModelView):
+#    column_list = ('dm', 'ldnsList', 'typ')
+#    column_searchable_list = ('dm','typ', 'ldnsList.addr')
+#    #column_filters = ['dm','ldnsList.addr','typ']
+#    column_labels = dict(dm=u'域名', typ=u'转发策略', ldnsList=u"DNS服务器",dns_fwds=u"DNS Forwarder")
+#
+#    #can_export = True
+#
+#    form_columns = ('dm', 'ldnsList')
+#
+#    #form_choices = {
+#    #        'typ': [
+#    #           ('only', 'only'),
+#    #           ('first', 'first'),
+#    #        ]
+#    #}
+#
+#    form_args = {
+#        'ldnsList': {
+#            'validators': [DataRequired()]
+#        },
+#        'dm': {
+#            'validators': [DataRequired()],
+#            'filters': [my_strip_filter]
+#        }
+#    }
+#
+#
+#    #form_ajax_refs = {
+#    #    'ldns': {
+#    #        'fields': (models.Ldns.addr)
+#    #    }
+#    #}
+#
+#    #def ldns_choices():
+#    #    #return [ ldns.addr for ldns in models.Ldns.query.all() ]
+#    #    return models.Ldns.query.all()
+#
+#
+#    #form_extra_fields= dict(
+#    #    #dns=QuerySelectMultipleField(
+#    #    #dns=MyQuerySelectMultipleField(
+#    #    #    label='DNS server',
+#    #    #    query_factory=ldns_choices,
+#    #    #    validators=[Required()],
+#    #    #)
+#
+#    #    dns=Select2TagsField(label='DNS Server',validators=[Required()]),
+#    #)

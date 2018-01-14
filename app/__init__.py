@@ -47,7 +47,12 @@ def create_app(config_name):
     ad = admin.Admin(app, name='IWG', template_mode='bootstrap3')
 
     from app import view
-    ad.add_view(view.DnsForwardZoneView(models.DnsForwardZone,db.session,name=u'DNS 转发表'))
+    #ad.add_view(view.DnsForwardZoneView(models.DnsForwardZone,db.session,name=u'DNS 转发表'))
+    ad.add_view(view.DnsForwardZoneGrpView(models.DnsForwardZoneGrp,db.session,name=u'域名组'))
+    ad.add_view(view.DnsForwardZoneView(models.DnsForwardZone,db.session,name=u'域名'))
+    ad.add_view(view.DnsForwardIpnetGrpView(models.DnsForwardIpnetGrp,db.session,name=u'源地址组'))
+    ad.add_view(view.DnsForwardIpnetView(models.DnsForwardIpnet,db.session,name=u'源地址'))
+    ad.add_view(view.DnsForwarderView(models.DnsForwarder,db.session,name=u'转发表'))
     ad.add_view(view.SubmitView(endpoint='submit',name=u'应用配置'))
 
     return app
