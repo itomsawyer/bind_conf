@@ -44,7 +44,7 @@ def create_app(config_name):
     app.register_blueprint(blp)
 
     # Create admin
-    ad = admin.Admin(app, name='IWG', template_mode='bootstrap3')
+    ad = admin.Admin(app, name=u'BIND配置管理', template_mode='bootstrap3')
 
     from app import view
     #ad.add_view(view.DnsForwardZoneView(models.DnsForwardZone,db.session,name=u'DNS 转发表'))
@@ -53,6 +53,7 @@ def create_app(config_name):
     ad.add_view(view.DnsForwardIpnetGrpView(models.DnsForwardIpnetGrp,db.session,name=u'源地址组'))
     ad.add_view(view.DnsForwardIpnetView(models.DnsForwardIpnet,db.session,name=u'源地址'))
     ad.add_view(view.DnsForwarderView(models.DnsForwarder,db.session,name=u'转发表'))
+    ad.add_view(view.LdnsView(models.Ldns,db.session,name=u'DNS表'))
     ad.add_view(view.SubmitView(endpoint='submit',name=u'应用配置'))
 
     return app

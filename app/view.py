@@ -65,11 +65,19 @@ class SubmitView(BaseView):
         return self.render('admin/submit.html', retcode=retcode)
 
 class DnsForwardZoneGrpView(sqla.ModelView):
-    can_export = True
+    column_labels = dict(name=u'域名组', disabled=u"状态", dns_forward_zones=u"域名")
+    column_searchable_list = ('name','disabled')
+    form_choices = {
+            'disabled': [
+               ('0',u'启用'),
+               ('1',u'禁用'),
+            ]
+    }
 
 class DnsForwardZoneView(sqla.ModelView):
-    column_labels = dict(name=u'域名', typ=u'转发策略',disabled=u"状态")
-    column_searchable_list = ('name','typ')
+    column_labels = dict(name=u'域名', typ=u'转发策略', grp=u'域名组', disabled=u"状态")
+    column_searchable_list = ('name','typ','disabled',models.DnsForwardZoneGrp.name)
+    column_sortable_list = (('grp','grp.name'), 'name','typ','disabled')
     form_choices = {
             'typ': [
                ('only', 'only'),
@@ -81,20 +89,54 @@ class DnsForwardZoneView(sqla.ModelView):
             ]
     }
 
-    can_export = True
 
 class DnsForwardIpnetGrpView(sqla.ModelView):
-    can_export = True
+    column_labels = dict(name=u'源地址组', disabled=u"状态", prio=u"优先级",dns_forward_ipnets=u'源地址段')
+    column_searchable_list = ('name','disabled','prio',models.DnsForwardIpnet.ipnet)
+    form_choices = {
+            'disabled': [
+               ('0',u'启用'),
+               ('1',u'禁用'),
+            ]
+    }
+
 
 class DnsForwardIpnetView(sqla.ModelView):
-    can_export = True
+    column_labels = dict(grp=u'源地址组', disabled=u"状态",ipnet=u'源地址段')
+    column_sortable_list = (('grp','grp.name'), 'ipnet','disabled')
+    column_searchable_list = (models.DnsForwardIpnetGrp.name, 'disabled','ipnet')
+    form_choices = {
+            'disabled': [
+               ('0',u'启用'),
+               ('1',u'禁用'),
+            ]
+    }
 
 class DnsForwarderView(sqla.ModelView):
-    can_export = True
+    column_labels = dict(disabled=u"状态",ldns=u"DNS服务器",ipnet_grp=u"源地址组",zone_grp=u"域名组")
+    column_sortable_list = (('zone_grp','zone_grp.name'), ('ipnet_grp','ipnet_grp.name'),('ldns','ldns.addr'),'disabled')
+    column_searchable_list = (models.DnsForwardIpnetGrp.name,models.DnsForwardZoneGrp.name, models.Ldns.addr, 'disabled')
+    form_choices = {
+            'disabled': [
+               ('0',u'启用'),
+               ('1',u'禁用'),
+            ]
+    }
+
+class LdnsView(sqla.ModelView):
+    column_labels = dict(addr=u"地址",name=u"名称",disabled=u"状态",status=u"可用性")
+    column_searchable_list = ('disabled','name','addr','status')
+    form_excluded_columns = ['status']
+    form_choices = {
+            'disabled': [
+               ('0',u'启用'),
+               ('1',u'禁用'),
+            ]
+    }
 
 #class DnsForwardZoneView(sqla.ModelView):
 #    column_list = ('dm', 'ldnsList', 'typ')
-#    column_searchable_list = ('dm','typ', 'ldnsList.addr')
+#    column_searchable_list = ['dm','typ', 'ldnsList.addr']
 #    #column_filters = ['dm','ldnsList.addr','typ']
 #    column_labels = dict(dm=u'域名', typ=u'转发策略', ldnsList=u"DNS服务器",dns_fwds=u"DNS Forwarder")
 #

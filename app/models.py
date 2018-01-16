@@ -3,7 +3,6 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.ext.associationproxy import association_proxy
 
-
 from app import db, login_manager
 
 class DnsForwardIpnet(db.Model):
@@ -11,10 +10,14 @@ class DnsForwardIpnet(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     ipnet = db.Column(db.String(45), nullable=False, unique=True)
-    disabled = db.Column(db.Integer)
+    disabled = db.Column(db.Integer, nullable=False)
+    #disabled = db.Column(db.Enum(Disabled), nullable=False)
     grp_id = db.Column(db.ForeignKey(u'dns_forward_ipnet_grp.id', ondelete=u'CASCADE', onupdate=u'CASCADE'), nullable=False, index=True)
 
     grp = db.relationship(u'DnsForwardIpnetGrp', primaryjoin='DnsForwardIpnet.grp_id == DnsForwardIpnetGrp.id', backref=u'dns_forward_ipnets')
+
+    def __repr__(self):
+        return self.ipnet
 
 
 class DnsForwardIpnetGrp(db.Model):
@@ -39,6 +42,9 @@ class DnsForwardZone(db.Model):
     disabled = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
 
     grp = db.relationship(u'DnsForwardZoneGrp', primaryjoin='DnsForwardZone.grp_id == DnsForwardZoneGrp.id', backref=u'dns_forward_zones')
+
+    def __repr__(self):
+        return self.name
 
 class DnsForwardZoneGrp(db.Model):
     __tablename__ = 'dns_forward_zone_grp'
@@ -81,9 +87,9 @@ class Ldns(db.Model):
     status = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
 
     def __str__(self):
-        return self.addr
+        return self.name + "-" + self.addr
 
     def __repr__(self):
-        return self.name + " " + self.addr
+        return self.name + "-" + self.addr
 
 
