@@ -11,13 +11,13 @@ class DevelopmentConfig(Config):
     Development configurations
     """
 
-    DNS_FORWARD_SUBMIT_PATH="/tmp/iwgweb.conf"
+    DNS_FORWARD_SUBMIT_PATH="/tmp/autogen.conf"
 
     LISTEN_HOST=""
     LISTEN_PORT=5001
 
     SECRET_KEY='123456790'
-    DATABASE_FILE = 'iwg'
+    DATABASE_FILE = 'bind_conf'
     SQLALCHEMY_DATABASE_URI = 'mysql://root:@localhost/' + DATABASE_FILE
 
     DEBUG = True
@@ -30,13 +30,13 @@ class ProductionConfig(Config):
     Production configurations
     """
 
-    DNS_FORWARD_SUBMIT_PATH="/var/named/iwgweb.conf"
+    DNS_FORWARD_SUBMIT_PATH="/var/named/autogen.conf"
 
     LISTEN_HOST=""
     LISTEN_PORT=5000
 
     SECRET_KEY='123456790'
-    DATABASE_FILE = 'iwg'
+    DATABASE_FILE = 'bind_conf'
     SQLALCHEMY_DATABASE_URI = 'mysql://root:iwgconf@localhost/' + DATABASE_FILE
 
     DEBUG = False
