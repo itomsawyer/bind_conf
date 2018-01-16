@@ -68,6 +68,19 @@ class DnsForwardZoneGrpView(sqla.ModelView):
     can_export = True
 
 class DnsForwardZoneView(sqla.ModelView):
+    column_labels = dict(name=u'域名', typ=u'转发策略',disabled=u"状态")
+    column_searchable_list = ('name','typ')
+    form_choices = {
+            'typ': [
+               ('only', 'only'),
+               ('first', 'first'),
+            ],
+            'disabled': [
+               ('0',u'启用'),
+               ('1',u'禁用'),
+            ]
+    }
+
     can_export = True
 
 class DnsForwardIpnetGrpView(sqla.ModelView):
