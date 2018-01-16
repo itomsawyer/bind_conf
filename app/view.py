@@ -10,7 +10,9 @@ from flask_admin.form import Select2Widget
 from wtforms.validators import DataRequired
 
 from . import models
+from flask import url_for, redirect, render_template, request, abort
 from flask_admin import BaseView, expose
+from flask_security import current_user
 
 import threading
 lock = threading.Lock()
@@ -20,7 +22,42 @@ def my_strip_filter(value):
         return value.strip()
     return value
 
-class SubmitView(BaseView):
+class Roled(object):
+    def is_accessible(self):
+        if not current_user.is_active or not current_user.is_authenticated:
+            return False
+
+        if current_user.has_role('superuser'):
+            return True
+
+        roles_accepted = getattr(self, 'roles_accepted', None)
+        return is_accessible(roles_accepted=roles_accepted, user=current_user)
+
+    def _handle_view(self, name, **kwargs):
+        """
+        Override builtin _handle_view in order to redirect users when a view is not accessible.
+        """
+        if not self.is_accessible():
+            if current_user.is_authenticated:
+                # permission denied
+                abort(403)
+            else:
+                # login
+                return redirect(url_for('security.login', next=request.url))
+
+class ActionView(Roled, BaseView):
+    def __init__(self, *args, **kwargs):
+        self.roles_accepted = kwargs.pop('roles_accepted', list())
+        super(ActionView, self).__init__(*args, **kwargs)
+
+class PermView(Roled, sqla.ModelView):
+    def __init__(self, *args, **kwargs):
+        self.roles_accepted = kwargs.pop('roles_accepted', list())
+        super(PermView, self).__init__(*args, **kwargs)
+
+
+
+class SubmitView(ActionView):
     @expose('/')
     def index(self):
         return self.render('admin/submit.html', beforeSubmit=True)
@@ -64,7 +101,7 @@ class SubmitView(BaseView):
         lock.release()
         return self.render('admin/submit.html', retcode=retcode)
 
-class DnsForwardZoneGrpView(sqla.ModelView):
+class DnsForwardZoneGrpView(PermView):
     column_labels = dict(name=u'域名组', disabled=u"状态", dns_forward_zones=u"域名")
     column_searchable_list = ('name','disabled')
     form_choices = {
@@ -74,7 +111,7 @@ class DnsForwardZoneGrpView(sqla.ModelView):
             ]
     }
 
-class DnsForwardZoneView(sqla.ModelView):
+class DnsForwardZoneView(PermView):
     column_labels = dict(name=u'域名', typ=u'转发策略', grp=u'域名组', disabled=u"状态")
     column_searchable_list = ('name','typ','disabled',models.DnsForwardZoneGrp.name)
     column_sortable_list = (('grp','grp.name'), 'name','typ','disabled')
@@ -90,7 +127,7 @@ class DnsForwardZoneView(sqla.ModelView):
     }
 
 
-class DnsForwardIpnetGrpView(sqla.ModelView):
+class DnsForwardIpnetGrpView(PermView):
     column_labels = dict(name=u'源地址组', disabled=u"状态", prio=u"优先级",dns_forward_ipnets=u'源地址段')
     column_searchable_list = ('name','disabled','prio',models.DnsForwardIpnet.ipnet)
     form_choices = {
@@ -101,7 +138,7 @@ class DnsForwardIpnetGrpView(sqla.ModelView):
     }
 
 
-class DnsForwardIpnetView(sqla.ModelView):
+class DnsForwardIpnetView(PermView):
     column_labels = dict(grp=u'源地址组', disabled=u"状态",ipnet=u'源地址段')
     column_sortable_list = (('grp','grp.name'), 'ipnet','disabled')
     column_searchable_list = (models.DnsForwardIpnetGrp.name, 'disabled','ipnet')
@@ -112,7 +149,7 @@ class DnsForwardIpnetView(sqla.ModelView):
             ]
     }
 
-class DnsForwarderView(sqla.ModelView):
+class DnsForwarderView(PermView):
     column_labels = dict(disabled=u"状态",ldns=u"DNS服务器",ipnet_grp=u"源地址组",zone_grp=u"域名组")
     column_sortable_list = (('zone_grp','zone_grp.name'), ('ipnet_grp','ipnet_grp.name'),('ldns','ldns.addr'),'disabled')
     column_searchable_list = (models.DnsForwardIpnetGrp.name,models.DnsForwardZoneGrp.name, models.Ldns.addr, 'disabled')
@@ -123,7 +160,9 @@ class DnsForwarderView(sqla.ModelView):
             ]
     }
 
-class LdnsView(sqla.ModelView):
+
+
+class LdnsView(PermView):
     column_labels = dict(addr=u"地址",name=u"名称",disabled=u"状态",status=u"可用性")
     column_searchable_list = ('disabled','name','addr','status')
     form_excluded_columns = ['status']
