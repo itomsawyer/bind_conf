@@ -117,8 +117,6 @@ class Ldns(db.Model):
     disabled = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
     status = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
 
-    def __str__(self):
-        return self.name + "-" + self.addr
 
     def __repr__(self):
         return self.name + "-" + self.addr

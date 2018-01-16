@@ -151,7 +151,7 @@ class DnsForwardIpnetView(PermView):
 
 class DnsForwarderView(PermView):
     column_labels = dict(disabled=u"状态",ldns=u"DNS服务器",ipnet_grp=u"源地址组",zone_grp=u"域名组")
-    column_sortable_list = (('zone_grp','zone_grp.name'), ('ipnet_grp','ipnet_grp.name'),('ldns','ldns.addr'),'disabled')
+    column_sortable_list = (('zone_grp','zone_grp.name'), ('ipnet_grp','ipnet_grp.name'),('ldns','ldns.name'),('ldns','ldns.addr'),'disabled')
     column_searchable_list = (models.DnsForwardIpnetGrp.name,models.DnsForwardZoneGrp.name, models.Ldns.addr, 'disabled')
     form_choices = {
             'disabled': [
