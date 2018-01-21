@@ -56,13 +56,14 @@ def create_app(config_name):
             template_mode='bootstrap3')
 
     from app import view
-    ad.add_view(view.DnsForwardZoneGrpView(models.DnsForwardZoneGrp,db.session,name=u'域名组',roles_accepted=["superuser"]))
-    ad.add_view(view.DnsForwardZoneView(models.DnsForwardZone,db.session,name=u'域名',roles_accepted=["superuser"]))
-    ad.add_view(view.DnsForwardIpnetGrpView(models.DnsForwardIpnetGrp,db.session,name=u'源地址组',roles_accepted=["superuser"]))
-    ad.add_view(view.DnsForwardIpnetView(models.DnsForwardIpnet,db.session,name=u'源地址',roles_accepted=["superuser"]))
-    ad.add_view(view.DnsForwarderView(models.DnsForwarder,db.session,name=u'转发表',roles_accepted=["superuser"]))
-    ad.add_view(view.LdnsView(models.Ldns,db.session,name=u'DNS表',roles_accepted=["superuser"]))
-    ad.add_view(view.SubmitView(endpoint='submit',name=u'应用配置',roles_accepted=["superuser"]))
+    ad.add_view(view.UserView(models.User,db.session,name=u'用户管理',roles_accepted=["superuser"]))
+    ad.add_view(view.DnsForwardZoneGrpView(models.DnsForwardZoneGrp,db.session,name=u'域名组',roles_accepted=["user"]))
+    ad.add_view(view.DnsForwardZoneView(models.DnsForwardZone,db.session,name=u'域名',roles_accepted=["user"]))
+    ad.add_view(view.DnsForwardIpnetGrpView(models.DnsForwardIpnetGrp,db.session,name=u'源地址组',roles_accepted=["user"]))
+    ad.add_view(view.DnsForwardIpnetView(models.DnsForwardIpnet,db.session,name=u'源地址',roles_accepted=["user"]))
+    ad.add_view(view.DnsForwarderView(models.DnsForwarder,db.session,name=u'转发表',roles_accepted=["user"]))
+    ad.add_view(view.LdnsView(models.Ldns,db.session,name=u'DNS表',roles_accepted=["user"]))
+    ad.add_view(view.SubmitView(endpoint='submit',name=u'应用配置',roles_accepted=["user"]))
 
     # define a context processor for merging flask-admin's template context into the
     # flask-security views.

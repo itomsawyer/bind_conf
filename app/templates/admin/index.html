@@ -5,10 +5,13 @@
     <div class="row">
         <div class="col-sm-10 col-sm-offset-1">
             {% if not current_user.is_authenticated %}
+            <!-- 
             <p>
                 <a class="btn btn-primary" href="{{ url_for('security.login') }}">登陆</a>
                 <a class="btn btn-primary" href="{{ url_for('security.register') }}">注册</a>
             </p>
+            -->
+            <meta http-equiv="refresh" content="0;url={{ url_for('security.login') }}">
             {% else  %}
             <h1 class "lead"> 欢迎 {{current_user}}</h1>
             {% endif %}

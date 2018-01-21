@@ -22,6 +22,19 @@ def my_strip_filter(value):
         return value.strip()
     return value
 
+def is_accessible(roles_accepted=None, user=None):
+    user = user or get_current_user()
+    # uncomment if "admin" has access to everything
+    # if user.has_role('admin'):
+    #     return True
+    if roles_accepted:
+        accessible = any(
+            [user.has_role(role) for role in roles_accepted]
+        )
+        return accessible
+
+    return True
+
 class Roled(object):
     def is_accessible(self):
         if not current_user.is_active or not current_user.is_authenticated:
@@ -100,6 +113,13 @@ class SubmitView(ActionView):
 
         lock.release()
         return self.render('admin/submit.html', retcode=retcode)
+
+class UserView(PermView):
+    column_labels = dict(email=u'用户名', active=u"激活", roles=u"角色",password=u"密码")
+    column_list = ('email','active','roles')
+    column_searchable_list = ('email','active','roles.name')
+    column_sortable_list = (('roles','roles.name'), 'email','active')
+    form_excluded_columns = ['last_name', 'first_name','confirmed_at']
 
 class DnsForwardZoneGrpView(PermView):
     column_labels = dict(name=u'域名组', disabled=u"状态", dns_forward_zones=u"域名")
