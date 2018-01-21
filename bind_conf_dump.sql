@@ -72,6 +72,20 @@ INSERT INTO `dns_forward_ipnet_grp` VALUES (1,'default',99,0);
 UNLOCK TABLES;
 
 --
+-- Temporary view structure for view `dns_forward_ipnet_view`
+--
+
+DROP TABLE IF EXISTS `dns_forward_ipnet_view`;
+/*!50001 DROP VIEW IF EXISTS `dns_forward_ipnet_view`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `dns_forward_ipnet_view` AS SELECT 
+ 1 AS `name`,
+ 1 AS `prio`,
+ 1 AS `ipnet`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `dns_forward_zone`
 --
 
@@ -159,6 +173,23 @@ LOCK TABLES `dns_forwarders` WRITE;
 INSERT INTO `dns_forwarders` VALUES (1,1,1,1,0);
 /*!40000 ALTER TABLE `dns_forwarders` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `dns_forwarders_view`
+--
+
+DROP TABLE IF EXISTS `dns_forwarders_view`;
+/*!50001 DROP VIEW IF EXISTS `dns_forwarders_view`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `dns_forwarders_view` AS SELECT 
+ 1 AS `view_name`,
+ 1 AS `view_prio`,
+ 1 AS `dm_zone`,
+ 1 AS `fwd_policy`,
+ 1 AS `ldns_name`,
+ 1 AS `ldns_addr`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `ldns`
@@ -271,6 +302,42 @@ LOCK TABLES `user` WRITE;
 INSERT INTO `user` VALUES (1,'Admin',NULL,'admin','admin',1,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Final view structure for view `dns_forward_ipnet_view`
+--
+
+/*!50001 DROP VIEW IF EXISTS `dns_forward_ipnet_view`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `dns_forward_ipnet_view` AS select `dns_forward_ipnet_grp`.`name` AS `name`,`dns_forward_ipnet_grp`.`prio` AS `prio`,`dns_forward_ipnet`.`ipnet` AS `ipnet` from (`dns_forward_ipnet_grp` join `dns_forward_ipnet`) where ((`dns_forward_ipnet_grp`.`disabled` = 0) and (`dns_forward_ipnet`.`disabled` = 0)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `dns_forwarders_view`
+--
+
+/*!50001 DROP VIEW IF EXISTS `dns_forwarders_view`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `dns_forwarders_view` AS select `dns_forward_ipnet_grp`.`name` AS `view_name`,`dns_forward_ipnet_grp`.`prio` AS `view_prio`,`dns_forward_zone`.`name` AS `dm_zone`,`dns_forward_zone`.`typ` AS `fwd_policy`,`ldns`.`name` AS `ldns_name`,`ldns`.`addr` AS `ldns_addr` from ((((`dns_forwarders` join `dns_forward_zone_grp`) join `dns_forward_ipnet_grp`) join `ldns`) join `dns_forward_zone`) where ((`dns_forwarders`.`disabled` = 0) and (`dns_forward_zone_grp`.`disabled` = 0) and (`dns_forward_ipnet_grp`.`disabled` = 0) and (`ldns`.`disabled` = 0) and (`dns_forward_zone`.`disabled` = 0)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -281,4 +348,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-21 15:09:30
+-- Dump completed on 2018-01-21 15:32:44

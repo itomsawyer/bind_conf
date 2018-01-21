@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
 import os
-import string
 import StringIO
 
 from flask_admin.contrib import sqla
@@ -13,6 +12,8 @@ from . import models
 from flask import url_for, redirect, render_template, request, abort
 from flask_admin import BaseView, expose
 from flask_security import current_user
+
+from app import db
 
 import threading
 lock = threading.Lock()
@@ -68,7 +69,59 @@ class PermView(Roled, sqla.ModelView):
         self.roles_accepted = kwargs.pop('roles_accepted', list())
         super(PermView, self).__init__(*args, **kwargs)
 
+class BindConfForwarders():
+    ldns = []
+    policy = ""
 
+    def __init__(self, policy, ldns=[]):
+        self.policy = policy
+        self.ldns = ldns
+
+    def SetPolicy(self, policy):
+        self.policy=policy
+
+    def AddLdns(self, ldns):
+        if not ldns in self.ldns:
+            self.ldns.append(ldns)
+
+class BindConfView():
+    def __init__(self, name, prio=0):
+        self.ipnets = []
+        self.name = name
+        self.prio = prio
+        self.zones = {}
+
+    def SetName(self, name):
+        self.name = name
+
+    def SetPrio(self, prio):
+        self.prio = prio
+
+    def AddIpnet(self, ipnet):
+        if not ipnet in self.ipnets:
+            self.ipnets.append(ipnet)
+
+    def AddForwarder(self, zone, fwd, fwd_policy):
+        if not zone in self.zones:
+            self.zones[zone] = BindConfForwarders(policy=fwd_policy)
+
+        self.zones[zone].AddLdns(fwd)
+
+class BindConf():
+    def __init__(self):
+        self.conf = {}
+
+    def AddView(self, name, prio):
+        if not name in self.conf:
+            self.conf[name] = BindConfView(name=name,prio=prio)
+
+    def AddIpnet(self, name, ipnet):
+        if name in self.conf:
+            self.conf[name].AddIpnet(ipnet)
+
+    def AddForwarder(self, name, zone, fwd, fwd_policy):
+        if name in self.conf:
+            self.conf[name].AddForwarder(zone, fwd, fwd_policy)
 
 class SubmitView(ActionView):
     @expose('/')
@@ -89,18 +142,44 @@ class SubmitView(ActionView):
             pass
 
         try:
-            dfs = models.DnsForwardZone.query.all()
+            views = models.DnsForwardIpnets.query.order_by('prio').all();
+            dfs = models.DnsForwarders.query.all()
+
+            bc = BindConf()
+            for v in views:
+                bc.AddView(v.name,v.prio)
+                bc.AddIpnet(v.name,v.ipnet)
+            for fw in dfs:
+                bc.AddForwarder(fw.view_name, fw.dm_zone, fw.ldns_addr, fw.fwd_policy)
+
+
             s = StringIO.StringIO()
-            for df in dfs:
-                if len(df.ldnsList) > 0 :
-                    s.write("zone \"%s\" IN {\n" % df.dm)
-                    s.write("\ttype forward;\n")
-                    s.write("\tforward %s;\n" % df.typ)
-                    s.write("\tforwarders {\n")
-                    for dns in df.ldnsList:
-                        s.write("\t\t%s;\n" % dns.addr)
+
+            sorted_conf = sorted(bc.conf.items(), key=lambda x: x[1].prio)
+            for item in sorted_conf:
+                view = item[1]
+
+                s.write("view \"%s\" {\n" % view.name)
+                s.write("\tmatch-clients {\n")
+                for ipnet in view.ipnets:
+                    s.write("\t\t%s;\n" % ipnet)
+                s.write("\t};\n")
+
+
+                for zone in view.zones:
+                    fwders = view.zones[zone]
+
+                    s.write("\n")
+                    s.write("\tzone \"%s\" IN {\n" % zone)
+                    s.write("\t\ttype forward;\n")
+                    s.write("\t\tforward %s;\n" % fwders.policy)
+                    s.write("\t\tforwarders {\n")
+                    for addr in fwders.ldns:
+                        s.write("\t\t\t%s;\n" % addr)
+                    s.write("\t\t};\n")
                     s.write("\t};\n")
-                    s.write("};\n")
+
+                s.write("};\n")
 
             with open(path, "w") as f:
                 f.write(s.getvalue())

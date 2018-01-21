@@ -36,6 +36,40 @@ class User(db.Model, UserMixin):
     def __str__(self):
         return self.email
 
+
+#t_dns_forward_ipnet_view = db.Table(
+#    'dns_forward_ipnet_view', db.metadata,
+#    db.Column('name', db.String(45)),
+#    db.Column('prio', db.Integer, server_default=db.FetchedValue()),
+#    db.Column('ipnet', db.String(45))
+#)
+
+class DnsForwarders(db.Model):
+    __tablename__ = 'dns_forwarders_view'
+
+    view_name = db.Column('view_name', db.String(45),primary_key=True)
+    view_prio = db.Column('view_prio', db.Integer, server_default=db.FetchedValue(),primary_key=True)
+    dm_zone = db.Column('dm_zone',   db.String(255),primary_key=True)
+    fwd_policy = db.Column('fwd_policy',db.String(45), server_default=db.FetchedValue())
+    ldns_name = db.Column('ldns_name', db.String(45),primary_key=True)
+    ldns_addr = db.Column('ldns_addr', db.String(45),primary_key=True)
+
+class DnsForwardIpnets(db.Model):
+    __tablename__  = 'dns_forward_ipnet_view'
+    name = db.Column('name', db.String(45),primary_key=True)
+    prio = db.Column('prio', db.Integer, server_default=db.FetchedValue())
+    ipnet = db.Column('ipnet', db.String(45),primary_key=True)
+
+#t_dns_forwarders_view = db.Table(
+#    'dns_forwarders_view', db.metadata,
+#    db.Column('view_name', db.String(45)),
+#    db.Column('view_prio', db.Integer, server_default=db.FetchedValue()),
+#    db.Column('dm_zone',   db.String(255)),
+#    db.Column('fwd_policy',db.String(45), server_default=db.FetchedValue()),
+#    db.Column('ldns_name', db.String(45)),
+#    db.Column('ldns_addr', db.String(45))
+#)
+
 class DnsForwardIpnet(db.Model):
     __tablename__ = 'dns_forward_ipnet'
 
