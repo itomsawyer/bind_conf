@@ -6,22 +6,19 @@ from flask_admin.contrib import sqla
 from flask_admin.contrib.sqla.fields import QuerySelectMultipleField, QuerySelectField
 from flask_admin.form.fields import Select2TagsField
 from flask_admin.form import Select2Widget
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired,NumberRange
 
 from . import models
 from flask import url_for, redirect, render_template, request, abort
 from flask_admin import BaseView, expose
 from flask_security import current_user
 
+from .validator import *
+
 from app import db
 
 import threading
 lock = threading.Lock()
-
-def my_strip_filter(value):
-    if value is not None and hasattr(value, 'strip'):
-        return value.strip()
-    return value
 
 def is_accessible(roles_accepted=None, user=None):
     user = user or get_current_user()
@@ -200,6 +197,23 @@ class UserView(PermView):
     column_sortable_list = (('roles','roles.name'), 'email','active')
     form_excluded_columns = ['last_name', 'first_name','confirmed_at']
 
+    form_args = {
+        'active': {
+            'validators': [DataRequired()]
+        },
+        'roles': {
+            'validators': [DataRequired()]
+        },
+        'password': {
+            'validators': [DataRequired()]
+        },
+        'email': {
+            'validators': [DataRequired()],
+            'filters': [my_strip_filter]
+        }
+    }
+
+
 class DnsForwardZoneGrpView(PermView):
     column_labels = dict(name=u'域名组', disabled=u"状态", dns_forward_zones=u"域名")
     column_searchable_list = ('name','disabled')
@@ -209,6 +223,17 @@ class DnsForwardZoneGrpView(PermView):
                ('1',u'禁用'),
             ]
     }
+
+    form_args = {
+        'disabled': {
+            'validators': [DataRequired()]
+        },
+        'name': {
+            'validators': [DataRequired()],
+            'filters': [my_strip_filter]
+        }
+    }
+
 
 class DnsForwardZoneView(PermView):
     column_labels = dict(name=u'域名', typ=u'转发策略', grp=u'域名组', disabled=u"状态")
@@ -225,6 +250,23 @@ class DnsForwardZoneView(PermView):
             ]
     }
 
+    form_args = {
+        'typ': {
+            'validators': [DataRequired()]
+        },
+        'grp': {
+            'validators': [DataRequired()]
+        },
+        'disabled': {
+            'validators': [DataRequired()]
+        },
+        'name': {
+            'validators': [DataRequired()],
+            'filters': [my_strip_filter]
+        }
+    }
+
+
 
 class DnsForwardIpnetGrpView(PermView):
     column_labels = dict(name=u'源地址组', disabled=u"状态", prio=u"优先级",dns_forward_ipnets=u'源地址段')
@@ -234,6 +276,22 @@ class DnsForwardIpnetGrpView(PermView):
                ('0',u'启用'),
                ('1',u'禁用'),
             ]
+    }
+
+    form_args = {
+        'active': {
+            'validators': [DataRequired()]
+        },
+        'prio': {
+            'validators': [DataRequired(),NumberRange(0,100,u'合法优先级取值0-100')]
+        },
+        'disabled': {
+            'validators': [DataRequired()]
+        },
+        'name': {
+            'validators': [DataRequired()],
+            'filters': [my_strip_filter]
+        }
     }
 
 
@@ -248,6 +306,19 @@ class DnsForwardIpnetView(PermView):
             ]
     }
 
+    form_args = {
+        'grp': {
+            'validators': [DataRequired()]
+        },
+        'disabled': {
+            'validators': [DataRequired()]
+        },
+        'ipnet': {
+            'validators': [DataRequired(),NetAddr()],
+        }
+    }
+
+
 class DnsForwarderView(PermView):
     column_labels = dict(disabled=u"状态",ldns=u"DNS服务器",ipnet_grp=u"源地址组",zone_grp=u"域名组")
     column_sortable_list = (('zone_grp','zone_grp.name'), ('ipnet_grp','ipnet_grp.name'),('ldns','ldns.name'),('ldns','ldns.addr'),'disabled')
@@ -260,6 +331,21 @@ class DnsForwarderView(PermView):
     }
 
 
+    form_args = {
+        'ldns': {
+            'validators': [DataRequired()]
+        },
+        'ipnet_grp': {
+            'validators': [DataRequired()]
+        },
+        'zone_grp': {
+            'validators': [DataRequired()]
+        },
+        'disabled': {
+            'validators': [DataRequired()]
+        },
+    }
+
 
 class LdnsView(PermView):
     column_labels = dict(addr=u"地址",name=u"名称",disabled=u"状态",status=u"可用性")
@@ -271,6 +357,20 @@ class LdnsView(PermView):
                ('1',u'禁用'),
             ]
     }
+
+    form_args = {
+        'addr': {
+            'validators': [DataRequired(),IPAddr()]
+        },
+        'name': {
+            'validators': [DataRequired()],
+            'filters':[my_strip_filter],
+        },
+        'disabled': {
+            'validators': [DataRequired()]
+        },
+    }
+
 
 #class DnsForwardZoneView(sqla.ModelView):
 #    column_list = ('dm', 'ldnsList', 'typ')

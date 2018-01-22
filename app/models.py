@@ -70,6 +70,12 @@ class DnsForwardIpnets(db.Model):
 #    db.Column('ldns_addr', db.String(45))
 #)
 
+#import enum
+#class Disabled(enum.Enum):
+#    enabled = 0
+#    disabled = 1
+
+
 class DnsForwardIpnet(db.Model):
     __tablename__ = 'dns_forward_ipnet'
 
