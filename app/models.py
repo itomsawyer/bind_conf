@@ -70,19 +70,12 @@ class DnsForwardIpnets(db.Model):
 #    db.Column('ldns_addr', db.String(45))
 #)
 
-#import enum
-#class Disabled(enum.Enum):
-#    enabled = 0
-#    disabled = 1
-
-
 class DnsForwardIpnet(db.Model):
     __tablename__ = 'dns_forward_ipnet'
 
     id = db.Column(db.Integer, primary_key=True)
     ipnet = db.Column(db.String(45), nullable=False, unique=True)
-    disabled = db.Column(db.Integer, nullable=False)
-    #disabled = db.Column(db.Enum(Disabled), nullable=False)
+    enabled = db.Column(db.Boolean(), nullable=False)
     grp_id = db.Column(db.ForeignKey(u'dns_forward_ipnet_grp.id', ondelete=u'CASCADE', onupdate=u'CASCADE'), nullable=False, index=True)
 
     grp = db.relationship(u'DnsForwardIpnetGrp', primaryjoin='DnsForwardIpnet.grp_id == DnsForwardIpnetGrp.id', backref=u'dns_forward_ipnets')
@@ -97,7 +90,7 @@ class DnsForwardIpnetGrp(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(45), nullable=False, unique=True)
     prio = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
-    disabled = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
+    enabled = db.Column(db.Boolean(), nullable=False, server_default=db.FetchedValue())
 
     def __repr__(self):
         return self.name
@@ -110,7 +103,7 @@ class DnsForwardZone(db.Model):
     name = db.Column(db.String(255), nullable=False, unique=True)
     typ = db.Column(db.String(45), nullable=False, server_default=db.FetchedValue())
     grp_id = db.Column(db.ForeignKey(u'dns_forward_zone_grp.id', ondelete=u'CASCADE', onupdate=u'CASCADE'), nullable=False, index=True)
-    disabled = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
+    enabled = db.Column(db.Boolean(), nullable=False, server_default=db.FetchedValue())
 
     grp = db.relationship(u'DnsForwardZoneGrp', primaryjoin='DnsForwardZone.grp_id == DnsForwardZoneGrp.id', backref=u'dns_forward_zones')
 
@@ -122,7 +115,7 @@ class DnsForwardZoneGrp(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False, unique=True)
-    disabled = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
+    enabled = db.Column(db.Boolean(), nullable=False, server_default=db.FetchedValue())
 
     def __repr__(self):
         return self.name
@@ -134,7 +127,7 @@ class DnsForwarder(db.Model):
     zone_grp_id = db.Column(db.ForeignKey(u'dns_forward_zone_grp.id', ondelete=u'CASCADE', onupdate=u'CASCADE'), nullable=False, index=True)
     ipnet_grp_id = db.Column(db.ForeignKey(u'dns_forward_ipnet_grp.id', ondelete=u'CASCADE', onupdate=u'CASCADE'), nullable=False, index=True)
     ldns_id = db.Column(db.ForeignKey(u'ldns.id'), nullable=False,  index=True)
-    disabled = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
+    enabled = db.Column(db.Boolean(), nullable=False, server_default=db.FetchedValue())
 
     zone_grp = db.relationship(u'DnsForwardZoneGrp')
     ipnet_grp = db.relationship(u'DnsForwardIpnetGrp')
@@ -154,8 +147,8 @@ class Ldns(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(45), nullable=False, unique=True)
     addr = db.Column(db.String(45), nullable=False, unique=True)
-    disabled = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
-    status = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
+    enabled = db.Column(db.Boolean(), nullable=False, server_default=db.FetchedValue())
+    status = db.Column(db.Boolean(), nullable=False, server_default=db.FetchedValue())
 
 
     def __repr__(self):

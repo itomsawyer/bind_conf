@@ -25,13 +25,13 @@ DROP TABLE IF EXISTS `dns_forward_ipnet`;
 CREATE TABLE `dns_forward_ipnet` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ipnet` varchar(45) NOT NULL,
-  `disabled` tinyint(4) NOT NULL DEFAULT '0',
+  `enabled` tinyint(4) NOT NULL DEFAULT '0',
   `grp_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ipnet_UNIQUE` (`ipnet`),
   KEY `grp_id_idx` (`grp_id`),
   CONSTRAINT `fk_ipnet_grp_id` FOREIGN KEY (`grp_id`) REFERENCES `dns_forward_ipnet_grp` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +40,7 @@ CREATE TABLE `dns_forward_ipnet` (
 
 LOCK TABLES `dns_forward_ipnet` WRITE;
 /*!40000 ALTER TABLE `dns_forward_ipnet` DISABLE KEYS */;
-INSERT INTO `dns_forward_ipnet` VALUES (1,'any',0,1);
+INSERT INTO `dns_forward_ipnet` VALUES (1,'any',1,1);
 /*!40000 ALTER TABLE `dns_forward_ipnet` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -55,10 +55,10 @@ CREATE TABLE `dns_forward_ipnet_grp` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
   `prio` int(11) NOT NULL DEFAULT '10',
-  `disabled` tinyint(4) NOT NULL DEFAULT '0',
+  `enabled` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +67,7 @@ CREATE TABLE `dns_forward_ipnet_grp` (
 
 LOCK TABLES `dns_forward_ipnet_grp` WRITE;
 /*!40000 ALTER TABLE `dns_forward_ipnet_grp` DISABLE KEYS */;
-INSERT INTO `dns_forward_ipnet_grp` VALUES (1,'default',99,0);
+INSERT INTO `dns_forward_ipnet_grp` VALUES (1,'default',99,1);
 /*!40000 ALTER TABLE `dns_forward_ipnet_grp` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -97,12 +97,12 @@ CREATE TABLE `dns_forward_zone` (
   `name` varchar(255) NOT NULL,
   `typ` varchar(45) NOT NULL DEFAULT 'only',
   `grp_id` int(11) NOT NULL,
-  `disabled` tinyint(4) NOT NULL DEFAULT '0',
+  `enabled` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`),
   KEY `grp_id_idx` (`grp_id`),
   CONSTRAINT `fk_zone_grp_id` FOREIGN KEY (`grp_id`) REFERENCES `dns_forward_zone_grp` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -111,7 +111,7 @@ CREATE TABLE `dns_forward_zone` (
 
 LOCK TABLES `dns_forward_zone` WRITE;
 /*!40000 ALTER TABLE `dns_forward_zone` DISABLE KEYS */;
-INSERT INTO `dns_forward_zone` VALUES (1,'.','only',1,0);
+INSERT INTO `dns_forward_zone` VALUES (1,'.','only',1,1);
 /*!40000 ALTER TABLE `dns_forward_zone` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -125,10 +125,10 @@ DROP TABLE IF EXISTS `dns_forward_zone_grp`;
 CREATE TABLE `dns_forward_zone_grp` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `disabled` tinyint(4) NOT NULL DEFAULT '0',
+  `enabled` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `dm_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -137,7 +137,7 @@ CREATE TABLE `dns_forward_zone_grp` (
 
 LOCK TABLES `dns_forward_zone_grp` WRITE;
 /*!40000 ALTER TABLE `dns_forward_zone_grp` DISABLE KEYS */;
-INSERT INTO `dns_forward_zone_grp` VALUES (1,'default',0);
+INSERT INTO `dns_forward_zone_grp` VALUES (1,'default',1);
 /*!40000 ALTER TABLE `dns_forward_zone_grp` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -153,7 +153,7 @@ CREATE TABLE `dns_forwarders` (
   `zone_grp_id` int(11) NOT NULL,
   `ipnet_grp_id` int(11) NOT NULL,
   `ldns_id` int(11) NOT NULL,
-  `disabled` tinyint(4) NOT NULL DEFAULT '0',
+  `enabled` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `zone_id_idx` (`zone_grp_id`),
   KEY `ldns_id_idx` (`ldns_id`),
@@ -161,7 +161,7 @@ CREATE TABLE `dns_forwarders` (
   CONSTRAINT `fk_fw_ipnet_grp_id` FOREIGN KEY (`ipnet_grp_id`) REFERENCES `dns_forward_ipnet_grp` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fw_ldns_id` FOREIGN KEY (`ldns_id`) REFERENCES `ldns` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_fw_zone_grp_id` FOREIGN KEY (`zone_grp_id`) REFERENCES `dns_forward_zone_grp` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -170,7 +170,7 @@ CREATE TABLE `dns_forwarders` (
 
 LOCK TABLES `dns_forwarders` WRITE;
 /*!40000 ALTER TABLE `dns_forwarders` DISABLE KEYS */;
-INSERT INTO `dns_forwarders` VALUES (1,1,1,1,0);
+INSERT INTO `dns_forwarders` VALUES (1,1,1,1,1);
 /*!40000 ALTER TABLE `dns_forwarders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -202,12 +202,12 @@ CREATE TABLE `ldns` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
   `addr` varchar(45) NOT NULL,
-  `disabled` tinyint(4) NOT NULL DEFAULT '0',
+  `enabled` tinyint(4) NOT NULL DEFAULT '0',
   `status` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name_UNIQUE` (`name`),
   UNIQUE KEY `addr_UNIQUE` (`addr`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,7 +216,7 @@ CREATE TABLE `ldns` (
 
 LOCK TABLES `ldns` WRITE;
 /*!40000 ALTER TABLE `ldns` DISABLE KEYS */;
-INSERT INTO `ldns` VALUES (1,'default','223.5.5.5',0,0),(2,'ali_public_dns','223.6.6.6',0,0);
+INSERT INTO `ldns` VALUES (1,'default','223.5.5.5',1,1);
 /*!40000 ALTER TABLE `ldns` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -290,7 +290,7 @@ CREATE TABLE `user` (
   `confirmed_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -299,7 +299,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'Admin',NULL,'admin','admin',1,NULL);
+INSERT INTO `user` VALUES (1,'Admin',NULL,'admin','$pbkdf2-sha512$25000$0zrnnPN.D4HQ.h/j3FuL0Q$xaPesYxR0W4dT4aPjTm0tExMNqtr3E1/a6H07kDDxgzVkw3mIanpVNlP52YDnyrf0lHAxesBPI0D.neRokix9g',1,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -316,7 +316,7 @@ UNLOCK TABLES;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `dns_forward_ipnet_view` AS select `dns_forward_ipnet_grp`.`name` AS `name`,`dns_forward_ipnet_grp`.`prio` AS `prio`,`dns_forward_ipnet`.`ipnet` AS `ipnet` from (`dns_forward_ipnet_grp` join `dns_forward_ipnet`) where ((`dns_forward_ipnet_grp`.`disabled` = 0) and (`dns_forward_ipnet`.`disabled` = 0)) */;
+/*!50001 VIEW `dns_forward_ipnet_view` AS select `dns_forward_ipnet_grp`.`name` AS `name`,`dns_forward_ipnet_grp`.`prio` AS `prio`,`dns_forward_ipnet`.`ipnet` AS `ipnet` from (`dns_forward_ipnet_grp` join `dns_forward_ipnet`) where ((`dns_forward_ipnet`.`grp_id` = `dns_forward_ipnet_grp`.`id`) and (`dns_forward_ipnet_grp`.`enabled` = 1) and (`dns_forward_ipnet`.`enabled` = 1)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -334,7 +334,7 @@ UNLOCK TABLES;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `dns_forwarders_view` AS select `dns_forward_ipnet_grp`.`name` AS `view_name`,`dns_forward_ipnet_grp`.`prio` AS `view_prio`,`dns_forward_zone`.`name` AS `dm_zone`,`dns_forward_zone`.`typ` AS `fwd_policy`,`ldns`.`name` AS `ldns_name`,`ldns`.`addr` AS `ldns_addr` from ((((`dns_forwarders` join `dns_forward_zone_grp`) join `dns_forward_ipnet_grp`) join `ldns`) join `dns_forward_zone`) where ((`dns_forwarders`.`disabled` = 0) and (`dns_forward_zone_grp`.`disabled` = 0) and (`dns_forward_ipnet_grp`.`disabled` = 0) and (`ldns`.`disabled` = 0) and (`dns_forward_zone`.`disabled` = 0)) */;
+/*!50001 VIEW `dns_forwarders_view` AS select `dns_forward_ipnet_grp`.`name` AS `view_name`,`dns_forward_ipnet_grp`.`prio` AS `view_prio`,`dns_forward_zone`.`name` AS `dm_zone`,`dns_forward_zone`.`typ` AS `fwd_policy`,`ldns`.`name` AS `ldns_name`,`ldns`.`addr` AS `ldns_addr` from ((((`dns_forwarders` join `dns_forward_zone_grp`) join `dns_forward_ipnet_grp`) join `ldns`) join `dns_forward_zone`) where ((`dns_forwarders`.`zone_grp_id` = `dns_forward_zone_grp`.`id`) and (`dns_forwarders`.`ipnet_grp_id` = `dns_forward_ipnet_grp`.`id`) and (`dns_forwarders`.`ldns_id` = `ldns`.`id`) and (`dns_forward_zone_grp`.`id` = `dns_forward_zone`.`grp_id`) and (`dns_forwarders`.`enabled` = 1) and (`dns_forward_zone_grp`.`enabled` = 1) and (`dns_forward_ipnet_grp`.`enabled` = 1) and (`ldns`.`status` = 1) and (`ldns`.`enabled` = 1) and (`dns_forward_zone`.`enabled` = 1)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -348,4 +348,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-21 15:32:44
+-- Dump completed on 2018-01-22 13:52:04
