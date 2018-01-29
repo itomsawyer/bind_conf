@@ -129,7 +129,7 @@ class SubmitView(ActionView):
         retcode = 0
         lock.acquire(True)
 
-        path = "/tmp/iwgweb.conf"
+        path = "/tmp/autogen.conf"
 
         try:
             from flask import current_app
