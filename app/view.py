@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 import os
-import StringIO
+from io import StringIO
 
 from flask_admin.contrib import sqla
 from flask_admin.contrib.sqla.fields import QuerySelectMultipleField, QuerySelectField
@@ -135,7 +135,7 @@ class SubmitView(ActionView):
             from flask import current_app
             if current_app.config["DNS_FORWARD_SUBMIT_PATH"] :
                 path = current_app.config["DNS_FORWARD_SUBMIT_PATH"]
-        except Exception, e:
+        except e:
             pass
 
         try:
@@ -183,7 +183,7 @@ class SubmitView(ActionView):
                 f.close()
 
             retcode = os.system("rndc reload")
-        except Exception,e:
+        except e:
             lock.release()
             return self.render('admin/submit.html', retcode=1, msg="%s" % e)
 

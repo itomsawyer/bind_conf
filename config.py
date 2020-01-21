@@ -19,7 +19,7 @@ class DevelopmentConfig(Config):
 
     SECRET_KEY='123456790'
     DATABASE_FILE = 'bind_conf'
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:@localhost/' + DATABASE_FILE
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost/' + DATABASE_FILE
 
     DEBUG = True
     SQLALCHEMY_ECHO = True
@@ -57,7 +57,7 @@ class ProductionConfig(Config):
 
     SECRET_KEY='123456790'
     DATABASE_FILE = 'bind_conf'
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:iwgconf@localhost/' + DATABASE_FILE
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:iwgconf@localhost/' + DATABASE_FILE
 
     DEBUG = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False

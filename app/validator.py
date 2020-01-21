@@ -11,7 +11,7 @@ def my_strip_filter(value):
 def netaddr_validator(form, data):
     try:
         IPNetwork(data.value)
-    except Exception, e:
+    except e:
         raise ValidationError(u'地址段格式不合法 示例192.168.1.0/24')
 
     return True
@@ -23,7 +23,7 @@ class NetAddr(object):
     def __call__(self, form, field):
         try:
             IPNetwork(field.data)
-        except Exception, e:
+        except e:
             raise ValidationError(self.message)
 
 
@@ -34,6 +34,6 @@ class IPAddr(object):
     def __call__(self, form, field):
         try:
             IPAddress(field.data)
-        except Exception, e:
+        except e:
             raise ValidationError(self.message)
 

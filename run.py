@@ -8,7 +8,7 @@ if __name__ == '__main__':
     if not runmode in app_config:
         raise Exception("* Run mode " + runmode + " does not exists, check your config.py")
 
-    print " * Run mode:" , runmode
+    print (" * Run mode:" , runmode)
     app = create_app(runmode)
     lh = app_config[runmode].LISTEN_HOST
     lp = app_config[runmode].LISTEN_PORT
