@@ -2,6 +2,7 @@ class Config(object):
     """
     Common configurations
     """
+    RUN_MODE="dev"
 
     # Put any configurations here that are common across all environments
 
@@ -82,5 +83,6 @@ class ProductionConfig(Config):
 
 app_config = {
     'dev': DevelopmentConfig,
-    'prod': ProductionConfig
+    'prod': ProductionConfig,
+    'common': Config,
 }
