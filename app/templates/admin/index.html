@@ -4,11 +4,17 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-10 col-sm-offset-1">
-            <h1>IWG配置管理</h1>
-            <p class="lead">
-                IWG智能网关配置
+            {% if not current_user.is_authenticated %}
+            <!-- 
+            <p>
+                <a class="btn btn-primary" href="{{ url_for('security.login') }}">登陆</a>
+                <a class="btn btn-primary" href="{{ url_for('security.register') }}">注册</a>
             </p>
-            <!-- <a class="btn btn-primary" href="/submit"><i class="glyphicon glyphicon-chevron-left"></i> 执行</a> -->
+            -->
+            <meta http-equiv="refresh" content="0;url={{ url_for('security.login') }}">
+            {% else  %}
+            <h1 class "lead"> 欢迎 {{current_user}}</h1>
+            {% endif %}
         </div>
     </div>
 </div>
